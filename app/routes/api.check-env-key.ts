@@ -30,12 +30,14 @@ export const loader: LoaderFunction = async ({ context, request }) => {
    * 3. Process environment variables (from .env.local)
    * 4. LLMManager environment variables
    */
-  const isSet = !!(
-    apiKeys?.[provider] ||
-    (context?.cloudflare?.env as Record<string, any>)?.[envVarName] ||
-    process.env[envVarName] ||
-    llmManager.env[envVarName]
-  );
+  const possibleKeys = [
+    apiKeys?.[provider],
+    (context?.cloudflare?.env as Record<string, any>)?.[envVarName],
+    process.env[envVarName],
+    llmManager.env[envVarName],
+  ];
+
+  const isSet = possibleKeys.some((key) => key && typeof key === 'string' && key.trim().length > 0);
 
   return Response.json({ isSet });
 };

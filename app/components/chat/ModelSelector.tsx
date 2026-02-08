@@ -114,6 +114,7 @@ export const ModelSelector = ({
   modelList,
   providerList,
   modelLoading,
+  apiKeys,
 }: ModelSelectorProps) => {
   const [modelSearchQuery, setModelSearchQuery] = useState('');
   const [debouncedModelSearchQuery, setDebouncedModelSearchQuery] = useState('');
@@ -781,13 +782,20 @@ export const ModelSelector = ({
                         ? 'No free models available'
                         : provider?.name && LOCAL_PROVIDERS.includes(provider.name)
                           ? `No models found — is ${provider.name} running?`
-                          : 'No models available'}
+                          : provider?.name && !apiKeys[provider.name]
+                            ? 'Enter API Key to view available models'
+                            : 'No models available'}
                   </div>
                   {!debouncedModelSearchQuery && provider?.name && LOCAL_PROVIDERS.includes(provider.name) && (
                     <div className="text-xs text-bolt-elements-textTertiary mt-1">
                       Make sure {provider.name} is running and has at least one model loaded.
                       {provider.name === 'Ollama' && ' Try: ollama pull llama3.2'}
                       {provider.name === 'LMStudio' && ' Load a model in LM Studio first.'}
+                    </div>
+                  )}
+                  {provider?.name && !LOCAL_PROVIDERS.includes(provider.name) && !apiKeys[provider.name] && (
+                    <div className="text-xs text-bolt-elements-textTertiary mt-1">
+                      Start by clicking the pencil icon next to the provider name to enter your API key.
                     </div>
                   )}
                   {debouncedModelSearchQuery && (
