@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection: users can read their own doc, admins can read/write all
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && isAdmin();
+      allow delete: if false;
+    }
+    
+    // App config: anyone authenticated can read, only admins can write
+    match /config/{configId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Features: authenticated users can read and create, admins can update/delete
+    match /features/{featureId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && isAdmin();
+      allow delete: if request.auth != null && isAdmin();
+    }
+    
+    // Bugs: authenticated users can read and create, admins can update/delete
+    match /bugs/{bugId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && isAdmin();
+      allow delete: if request.auth != null && isAdmin();
+    }
+    
+    // Support tickets: users can read/create their own, admins can read/write all
+    match /support/{ticketId} {
+      allow read: if request.auth != null && (resource.data.author == request.auth.uid || isAdmin());
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && (resource.data.author == request.auth.uid || isAdmin());
+      allow delete: if request.auth != null && isAdmin();
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+  }
+}

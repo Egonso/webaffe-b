@@ -14,6 +14,7 @@ import { useSearchFilter } from '~/lib/hooks/useSearchFilter';
 import { classNames } from '~/utils/classNames';
 import { useStore } from '@nanostores/react';
 import { profileStore } from '~/lib/stores/profile';
+import { useAuth } from '~/lib/hooks/useAuth';
 
 const menuVariants = {
   closed: {
@@ -73,6 +74,7 @@ export const Menu = () => {
   const profile = useStore(profileStore);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const { isAdmin, profile: authProfile, logout } = useAuth();
 
   const { filteredItems: filteredList, handleSearchChange } = useSearchFilter({
     items: list,
@@ -525,11 +527,38 @@ export const Menu = () => {
               </Dialog>
             </DialogRoot>
           </div>
-          <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-800 px-4 py-3">
-            <div className="flex items-center gap-3">
-              <SettingsButton onClick={handleSettingsClick} />
+          <div className="flex flex-col border-t border-gray-200 dark:border-gray-800 px-4 py-3 gap-2">
+            {isAdmin && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <SettingsButton onClick={handleSettingsClick} />
+                  <a
+                    href="/admin"
+                    className="flex items-center gap-1.5 text-xs font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
+                  >
+                    <span className="i-ph:shield-check h-4 w-4" />
+                    Admin
+                  </a>
+                </div>
+                <ThemeSwitch />
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <span className="i-ph:user h-3.5 w-3.5" />
+                <span className="truncate max-w-[140px]">{authProfile?.email || 'User'}</span>
+                {isAdmin && (
+                  <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded text-[10px] font-semibold uppercase">Admin</span>
+                )}
+              </div>
+              <button
+                onClick={() => logout()}
+                className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+              >
+                <span className="i-ph:sign-out h-3.5 w-3.5" />
+                Logout
+              </button>
             </div>
-            <ThemeSwitch />
           </div>
         </div>
       </motion.div>

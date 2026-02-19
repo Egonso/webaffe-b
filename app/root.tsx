@@ -14,6 +14,8 @@ import { cssTransition, ToastContainer } from 'react-toastify';
 import reactToastifyStyles from 'react-toastify/dist/ReactToastify.css?url';
 import globalStyles from './styles/index.scss?url';
 import xtermStyles from '@xterm/xterm/css/xterm.css?url';
+import authStyles from './styles/auth.css?url';
+import adminStyles from './styles/admin.css?url';
 
 import 'virtual:uno.css';
 
@@ -32,6 +34,8 @@ export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: tailwindReset },
   { rel: 'stylesheet', href: globalStyles },
   { rel: 'stylesheet', href: xtermStyles },
+  { rel: 'stylesheet', href: authStyles },
+  { rel: 'stylesheet', href: adminStyles },
   {
     rel: 'preconnect',
     href: 'https://fonts.googleapis.com',
@@ -117,11 +121,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 import { logStore } from './lib/stores/logs';
+import { initializeAuthListener } from './lib/stores/authStore';
 
 export default function App() {
   const theme = useStore(themeStore);
 
   useEffect(() => {
+    // Initialize Firebase Auth listener
+    initializeAuthListener();
+
     logStore.logSystem('Application initialized', {
       theme,
       platform: navigator.platform,

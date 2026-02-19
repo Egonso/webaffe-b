@@ -4,6 +4,7 @@ import { BaseChat } from '~/components/chat/BaseChat';
 import { Chat } from '~/components/chat/Chat.client';
 import { Header } from '~/components/header/Header';
 import BackgroundRays from '~/components/ui/BackgroundRays';
+import { AuthGuard } from '~/components/auth/AuthGuard';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'WebAffe' }, { name: 'description', content: 'Talk with WebAffe, an AI assistant from WebAffe' }];
@@ -19,10 +20,25 @@ export const loader = () => json({});
  */
 export default function Index() {
   return (
-    <div className="flex flex-col h-full w-full bg-bolt-elements-background-depth-1">
-      <BackgroundRays />
-      <Header />
-      <ClientOnly fallback={<BaseChat />}>{() => <Chat />}</ClientOnly>
-    </div>
+    <ClientOnly
+      fallback={
+        <div className="auth-loading">
+          <div className="auth-loading-content">
+            <div className="auth-loading-spinner" />
+            <p>Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      {() => (
+        <AuthGuard>
+          <div className="flex flex-col h-full w-full bg-bolt-elements-background-depth-1">
+            <BackgroundRays />
+            <Header />
+            <ClientOnly fallback={<BaseChat />}>{() => <Chat />}</ClientOnly>
+          </div>
+        </AuthGuard>
+      )}
+    </ClientOnly>
   );
 }
