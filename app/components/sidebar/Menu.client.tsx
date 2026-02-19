@@ -528,21 +528,23 @@ export const Menu = () => {
             </DialogRoot>
           </div>
           <div className="flex flex-col border-t border-gray-200 dark:border-gray-800 px-4 py-3 gap-2">
-            {isAdmin && (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <SettingsButton onClick={handleSettingsClick} />
-                  <a
-                    href="/admin"
-                    className="flex items-center gap-1.5 text-xs font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
-                  >
-                    <span className="i-ph:shield-check h-4 w-4" />
-                    Admin
-                  </a>
-                </div>
-                <ThemeSwitch />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {isAdmin && (
+                  <>
+                    <SettingsButton onClick={handleSettingsClick} />
+                    <a
+                      href="/admin"
+                      className="flex items-center gap-1.5 text-xs font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
+                    >
+                      <span className="i-ph:shield-check h-4 w-4" />
+                      Admin
+                    </a>
+                  </>
+                )}
               </div>
-            )}
+              <ThemeSwitch />
+            </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                 <span className="i-ph:user h-3.5 w-3.5" />
